@@ -434,7 +434,7 @@
       <div class="top-row"><div style="min-width:0"><div class="sym">${esc(x.symbol)}</div><div class="nm">${esc(x.name || "")}</div><div style="margin-top:6px">${actPill(x.action) || pill(x.label)}</div></div>${ring(x.composite, 58)}</div>
       <div class="mbars">${bars.map(([l, v]) => `<div class="mbar">${l}<i><b style="width:${isNum(v) ? v : 0}%;background:${scol(v || 0)}"></b></i></div>`).join("")}</div>
       <div class="stats"><div>P/E<b>${num(x.pe, 1)}</b></div><div>Rev CAGR<b>${pct(x.revCagr, 0)}</b></div><div>Base real<b>${sp(x.baseReal)}</b></div></div>
-      <div style="margin-top:8px">${tagsHtml(x.tags, 2)}${x.critical ? '<span class="tag bad">⚠ red flag</span>' : ""}</div>
+      <div style="margin-top:8px">${tagsHtml(x.tags, 2)}${x.critical ? '<span class="tag bad">⚠ red flag</span>' : ""}${isNum(x.avgDailyTurnoverCr) && x.avgDailyTurnoverCr < 5 ? '<span class="tag bad">low liquidity</span>' : ""}</div>
       ${x.reason ? `<div class="why">${esc(x.reason)}</div>` : ""}
       ${cmp ? `<label class="cmpbox chk" title="Add to comparison" onclick="event.stopPropagation()"><input type="checkbox" class="cmpchk" value="${esc(x.symbol)}"></label>` : ""}</div>`;
   }
@@ -575,6 +575,7 @@
           <div class="k">Sector</div><div>${esc(pf.sector || a.industry || "—")}</div>
           ${pf.industry ? `<div class="k">Industry</div><div>${esc(pf.industry)}</div>` : ""}
           <div class="k">Company size</div><div>${crs(m.mcap)} <span class="muted sm">${sizeWord(m.mcap)}</span></div>
+          ${isNum(m.avgDailyTurnoverCr) ? `<div class="k">Liquidity</div><div>≈₹${m.avgDailyTurnoverCr < 10 ? m.avgDailyTurnoverCr.toFixed(1) : Math.round(m.avgDailyTurnoverCr)} cr/day${m.avgDailyTurnoverCr < 5 ? ' <span class="down sm">low — orders may move the price</span>' : ""}</div>` : ""}
           ${pf.employees ? `<div class="k">Employees</div><div>${Number(pf.employees).toLocaleString("en-IN")}</div>` : ""}
           ${pf.city ? `<div class="k">Head office</div><div>${esc(pf.city)}</div>` : ""}
           ${(pf.officers || []).slice(0, 2).map((o) => `<div class="k">${esc((o.title || "").split(/[,&]/)[0].slice(0, 28))}</div><div>${esc(o.name)}</div>`).join("")}
@@ -584,6 +585,8 @@
       <div class="card"><div class="card-h"><h2>Money summary</h2><span class="hint">latest year (FY${String(m.latestFy || "").slice(2, 4)}) · hover a box for an explanation</span></div>
         <div class="money">${(b.money || []).map((t) => `<div class="mt" data-tip="${esc(t.explain)}" style="--tc:${TONE[t.tone] || "var(--ink-3)"}"><span class="k">${esc(t.k)}</span><b>${esc(t.v)}</b><span class="s">${esc(t.sub)}</span></div>`).join("")}</div>
         <div style="margin-top:18px"><div class="sm" style="font-weight:600;margin-bottom:6px">Sales and profit over the years (₹ crore)</div>${bars((a.years || []).map((y) => "FY" + y.fy.slice(2, 4)), [{ name: "Sales", color: "var(--a2)", values: (a.years || []).map((y) => (isNum(y.rev) ? y.rev / 1e7 : null)) }, { name: "Profit", color: "var(--a1)", values: (a.years || []).map((y) => (isNum(y.ni) ? y.ni / 1e7 : null)) }], { h: 190, fmtV: (x) => "₹" + num(x, 0) + " cr" })}</div></div>
+
+      ${series.length >= 2 ? `<div class="card"><div class="card-h"><h2>Share price</h2><div class="seg" id="pxRng" style="margin-left:auto">${[["1Y", 52], ["3Y", 156], ["5Y", 9999]].map(([l, n], i) => `<button data-n="${n}" class="${i === 0 ? "on" : ""}">${l}</button>`).join("")}</div></div><div id="pxMain">${areaChart(series.slice(-52), { color: "auto", fmtV: (x) => "₹" + num(x, 0) })}</div></div>` : ""}
 
       <div class="grid g2">
         <div class="card pc pros"><div class="card-h"><h2>👍 Good things</h2></div>${(b.prosCons && b.prosCons.pros.length ? b.prosCons.pros : ["Nothing stands out as a clear strength."]).map((x) => `<div class="pci">${esc(x)}</div>`).join("")}</div>
@@ -631,6 +634,7 @@
       </details>${disc}`;
 
     // wiring
+    if ($("#pxRng")) $("#pxRng").onclick = (e) => { const bt = e.target.closest("[data-n]"); if (!bt) return; $$("#pxRng button").forEach((x) => x.classList.toggle("on", x === bt)); $("#pxMain").innerHTML = areaChart(series.slice(-+bt.dataset.n), { color: "auto", fmtV: (x) => "₹" + num(x, 0) }); flush(); };
     $("#rng").onclick = (e) => { const bt = e.target.closest("[data-n]"); if (!bt) return; $$("#rng button").forEach((x) => x.classList.toggle("on", x === bt)); $("#pxHost").innerHTML = areaChart(series.slice(-+bt.dataset.n), { color: "auto", fmtV: (x) => "₹" + num(x, 0) }); flush(); };
     const yrs = a.years || [], labs = yrs.map((y) => "FY" + y.fy.slice(2, 4)), crv = (k) => yrs.map((y) => (isNum(y[k]) ? y[k] / 1e7 : null));
     const FIN = {
@@ -688,7 +692,7 @@
         <div class="slider"><div class="lab">EPS growth / yr<b data-gv="${k}"></b></div><input type="range" data-g="${k}" min="-15" max="35" step="0.5" value="${(as.growth[k] * 100).toFixed(1)}"></div>
         <div class="slider"><div class="lab">Exit P/E in year 5<b data-pv="${k}"></b></div><input type="range" data-p="${k}" min="3" max="80" step="0.5" value="${as.exitPe[k]}"></div></div>`).join("")}</div>
       <div id="fanHost" style="margin-top:16px"></div>
-      <div class="sm muted" style="margin-top:10px"><b>Defaults:</b> base growth = 60% of recent growth ${pct(df.historicGrowth)} (70% revenue + 30% profit CAGR) + 40% of a ${pct(df.longRun || 0.1, 0)} long-run rate, capped at 15%${df.cyclical ? " — <b>cyclical sector</b>: capped at 8%, no re-rating" : ""}. Exit P/E vs today's ${num(df.currentPe, 1)} and the industry's ${num(df.peerPe, 1)}: expensive stocks de-rate halfway, cheap ones re-rate only 30% of the way. ${as.normalised ? "<b>EPS is normalised</b> (one-off gains removed). " : ""}Return = (EPS₅ × exit P/E ÷ price)^(1/5) − 1 + ${pct(as.divYield)} dividend yield; real = after ${pct(infl)} inflation.</div>
+      <div class="sm muted" style="margin-top:10px"><b>Defaults:</b> base growth = ${df.decelAdjusted ? "35%" : "60%"} of recent growth ${pct(df.historicGrowth)} (70% revenue + 30% profit CAGR) + ${df.decelAdjusted ? "65%" : "40%"} of a ${pct(df.longRun || 0.1, 0)} long-run rate, capped at 15%${df.decelAdjusted ? " — <b>growth is decelerating</b>, so we lean more on the long-run anchor" : ""}${df.cyclical ? " — <b>cyclical sector</b>: capped at 8%, no re-rating" : ""}. Exit P/E vs today's ${num(df.currentPe, 1)} and the industry's ${num(df.peerPe, 1)}: expensive stocks de-rate halfway, cheap ones re-rate only 30% of the way. ${as.normalised ? "<b>EPS is normalised</b> (one-off gains removed). " : ""}Return = (EPS₅ × exit P/E ÷ price)^(1/5) − 1 + ${pct(as.divYield)} dividend yield; real = after ${pct(infl)} inflation.</div>
       <div class="row noprint" style="margin-top:12px"><button class="btn pri sm" id="sSave">Save my assumptions</button><button class="btn sm" id="sReset">Reset to defaults</button>${a.assumptions.overridden ? '<span class="sm muted">Using your saved assumptions.</span>' : ""}</div>`;
     const upd = () => {
       const s = calc();

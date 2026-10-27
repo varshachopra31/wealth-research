@@ -32,6 +32,7 @@ function slim(a) {
     g: a.score && a.score.groups.growth && a.score.groups.growth.score, v: a.score && a.score.groups.value && a.score.groups.value.score,
     s: a.score && a.score.groups.safety && a.score.groups.safety.score,
     price: m.price, mcapCr: m.mcap ? m.mcap / A.CR : null, pe: m.pe, roe: m.roe, roce: m.roce, revCagr: m.revCagr, niCagr: m.niCagr, de: m.de, divYield: m.divYield,
+    avgDailyTurnoverCr: m.avgDailyTurnoverCr || null,
     baseReal: a.scenarios && a.scenarios.base.real, bearReal: a.scenarios && a.scenarios.bear.real, bullReal: a.scenarios && a.scenarios.bull.real,
     ret1y: m.ret1y, insufficient: !!m.insufficient, reason: (a.reasons || [])[0] || "", action: a.action || null,
   };
