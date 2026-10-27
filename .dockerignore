@@ -1,0 +1,8 @@
+backups/
+*.db
+*.db-wal
+*.db-shm
+.git/
+.claude/
+node_modules/
+Start Wealth Research.cmd

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compound · Research</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%2334d399'/%3E%3Cstop offset='1' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='%230b0d14'/%3E%3Cpath d='M7 22c4 0 5-9 9-9s4 5 9-6' stroke='url(%23g)' stroke-width='3.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<script>try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark")}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<div class="jobbar" id="jobbar" hidden><i></i></div>
+<header class="top">
+  <a class="logo" href="#/home" aria-label="Home"><svg viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><path d="M5 23c5 0 6-11 11-11s5 6 11-7" stroke="url(#lg)" stroke-width="3.4" fill="none" stroke-linecap="round"/></svg><span>Compound</span></a>
+  <nav class="tabsnav" id="nav"></nav>
+  <div class="top-actions">
+    <button class="searchbtn" id="openPalette" title="Search (Ctrl K)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search</span><kbd>Ctrl K</kbd></button>
+    <a class="iconbtn" href="#/alerts" title="Alerts" id="bell"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><b id="bellCount" hidden></b></a>
+    <button class="iconbtn" id="themeBtn" title="Toggle theme"><svg viewBox="0 0 24 24" id="themeIco"></svg></button>
+    <a class="iconbtn" href="#/settings" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a>
+  </div>
+</header>
+<main class="page" id="view"></main>
+<footer class="foot" id="foot"></footer>
+
+<div class="palette" id="palette" hidden>
+  <div class="palette-box" role="dialog" aria-label="Search">
+    <div class="palette-in"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="palInput" placeholder="Search stocks, funds or pages…" autocomplete="off"><kbd>Esc</kbd></div>
+    <div class="palette-list" id="palList"></div>
+  </div>
+</div>
+<div class="tip" id="tip" hidden></div>
+<div class="toasts" id="toasts"></div>
+<script src="/app.js"></script>
+<script src="/smartmoney.js"></script>
+<script src="/assistant.js"></script>
+</body>
+</html>

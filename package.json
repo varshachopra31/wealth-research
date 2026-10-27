@@ -1,0 +1,14 @@
+{
+  "name": "wealth-research",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal AI-assisted investment research dashboard for Indian stocks, mutual funds and startup/VC trends. Free data sources, no dependencies.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/analysis.test.js test/beginner.test.js test/smartmoney.test.js"
+  },
+  "engines": {
+    "node": ">=22.13"
+  }
+}
