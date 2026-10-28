@@ -593,6 +593,9 @@
         <div class="card pc cons"><div class="card-h"><h2>👎 Things to worry about</h2></div>${(b.prosCons && b.prosCons.cons.length ? b.prosCons.cons : ["No automated warning signs — still read the annual report for governance and related-party deals."]).map((x) => `<div class="pci">${esc(x)}</div>`).join("")}</div>
       </div>
 
+      ${(a.peers || []).length ? `<div class="card"><div class="card-h"><h2>Alternatives in ${esc(a.industry || "this industry")}</h2><span class="hint">same industry, sorted by composite score</span></div>
+        <div class="peer-scroll">${a.peers.map((x) => stockCard(x)).join("")}</div></div>` : ""}
+
       <div class="card"><div class="card-h"><h2>Who owns it — and who's buying?</h2>${own ? `<span class="hint">NSE shareholding filing, quarter ending ${esc(own.asOf)}</span>` : ""}</div>
         ${own ? `<div class="grid g-12" style="gap:24px">
           <div>${donut([...own.parts.map((p, i) => ({ label: p.label, value: p.pct, color: PALETTE[i % PALETTE.length] })), ...(1 - own.parts.reduce((t, p) => t + p.pct, 0) > 0.001 ? [{ label: "Others", value: 1 - own.parts.reduce((t, p) => t + p.pct, 0), color: "#64748b" }] : [])], { size: 200, center: own.parts[0] ? pct(own.parts[0].pct, 1) : "" })}<div class="sm muted" style="text-align:center;margin-top:6px">${own.parts[0] ? esc(own.parts[0].label) + " own the largest share" : ""}</div></div>
@@ -660,6 +663,7 @@
       catch (e) { $("#aiBody").innerHTML = `<div class="note warn">${esc(e.message)} <a href="#/settings">Open settings</a></div>`; }
       bt.disabled = false; bt.textContent = "✦ AI explainer";
     };
+    wireCards(view());
   };
   const sizeWord = (mc) => (!isNum(mc) ? "" : mc >= 1e12 ? "· large company" : mc >= 2e11 ? "· mid-sized company" : "· smaller company");
   function newsRow(n) {

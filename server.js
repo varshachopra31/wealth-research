@@ -271,7 +271,8 @@ route("GET", /^\/api\/stock\/([A-Z0-9&_-]+)$/, async (req, m) => {
   const news = db.prepare("SELECT title, link, source, published FROM news WHERE (',' || symbols || ',') LIKE ? ORDER BY published DESC LIMIT 15").all("%," + sym + ",%");
   const notes = db.prepare("SELECT * FROM ai_notes WHERE subject=? ORDER BY id DESC LIMIT 5").all(sym).map((n) => ({ ...n, sources: parseJ(n.sources) }));
   const pj = p && parseJ(p.json);
-  return { ...a, years: f && parseJ(f.json) ? parseJ(f.json).years : [], fundFetchedAt: f && f.fetched_at, fundError: f && f.error, priceFetchedAt: p && p.fetched_at, series: pj ? pj.series : [], high52: pj && pj.high52, low52: pj && pj.low52, news, notes, watched: !!db.prepare("SELECT 1 FROM watchlist WHERE symbol=?").get(sym), fit: fitFor(a, portfolioView()) };
+  const peers = allAnalysis().filter((x) => x.industry === a.industry && x.symbol !== sym && !x.metrics.insufficient).map(slim).sort((a, b) => (b.composite || 0) - (a.composite || 0)).slice(0, 6);
+  return { ...a, years: f && parseJ(f.json) ? parseJ(f.json).years : [], fundFetchedAt: f && f.fetched_at, fundError: f && f.error, priceFetchedAt: p && p.fetched_at, series: pj ? pj.series : [], high52: pj && pj.high52, low52: pj && pj.low52, news, notes, watched: !!db.prepare("SELECT 1 FROM watchlist WHERE symbol=?").get(sym), fit: fitFor(a, portfolioView()), peers };
 });
 route("POST", /^\/api\/stock\/([A-Z0-9&_-]+)\/assumptions$/, (req, m, body) => {
   const sym = decodeURIComponent(m[1]);
